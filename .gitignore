@@ -1,0 +1,11 @@
+*.pth
+*.pkl
+*.npy
+*.npz
+*.task
+model-files/
+__pycache__/
+*.pyc
+screenshots/
+screenshot_*.png
+.venv/

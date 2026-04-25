@@ -42,10 +42,6 @@ landmarker = mp_vision.HandLandmarker.create_from_options(options)
 
 
 def extract_landmarks(image_path):
-    """
-    Returns flat 63-dim vector (21 landmarks × x,y,z) normalised to wrist.
-    Returns None if no hand detected.
-    """
     img = cv2.imread(image_path)
     if img is None:
         return None
@@ -56,15 +52,21 @@ def extract_landmarks(image_path):
     if not result.hand_landmarks:
         return None
 
-    lm = result.hand_landmarks[0]   # list of 21 NormalizedLandmark
-    wrist_x, wrist_y, wrist_z = lm[0].x, lm[0].y, lm[0].z
+    lm = result.hand_landmarks[0]
+    wx, wy, wz = lm[0].x, lm[0].y, lm[0].z
+
+    # Hand-size normalisation: wrist (0) to middle finger MCP (9)
+    hand_size = ((lm[9].x - wx)**2 +
+                 (lm[9].y - wy)**2 +
+                 (lm[9].z - wz)**2) ** 0.5
+    hand_size = max(hand_size, 1e-6)
+
     coords = []
     for point in lm:
-        coords.extend([point.x - wrist_x,
-                       point.y - wrist_y,
-                       point.z - wrist_z])
+        coords.extend([(point.x - wx) / hand_size,
+                       (point.y - wy) / hand_size,
+                       (point.z - wz) / hand_size])
     return np.array(coords, dtype=np.float32)
-
 
 def main():
     X, y = [], []

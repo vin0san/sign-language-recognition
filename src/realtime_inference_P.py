@@ -2,7 +2,7 @@
 STEP 3 — Real-Time Inference + Word Builder + Text-to-Speech
 =============================================================
 Run this LOCALLY. Requires model.pth, scaler.pkl, label_classes.npy
-in same folder (or model-files/ subfolder).
+in model-files.
 
 Install:
     pip install mediapipe opencv-python torch scikit-learn joblib numpy pyttsx3
@@ -98,9 +98,17 @@ def load_model():
 # ── FEATURES ──────────────────────────────────────────────────────────────────
 def extract_landmarks(lm_list):
     wx, wy, wz = lm_list[0].x, lm_list[0].y, lm_list[0].z
+
+    hand_size = ((lm_list[9].x - wx)**2 +
+                 (lm_list[9].y - wy)**2 +
+                 (lm_list[9].z - wz)**2) ** 0.5
+    hand_size = max(hand_size, 1e-6)  # avoid division by zero
+
     coords = []
     for p in lm_list:
-        coords.extend([p.x - wx, p.y - wy, p.z - wz])
+        coords.extend([(p.x - wx) / hand_size,
+                       (p.y - wy) / hand_size,
+                       (p.z - wz) / hand_size])
     return np.array(coords, dtype=np.float32)
 
 

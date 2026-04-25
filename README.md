@@ -78,7 +78,9 @@ Weakest classes: **M** (93% F1) and **N** (89% F1) — expected, as these differ
 sign-language-recognition/
 ├── src/extract_landmarks.py   # Extract MediaPipe landmarks from dataset
 ├── src/train.py               # Train MLP classifier on landmark features
-├── src/realtime_inference.py            # Real-time webcam inference + word builder
+├── src/realtime_inference_O.py            # Real-time webcam inference + word builder (.onnx version)
+├── src/realtime_inference_P.py            # Real-time webcam inference + word builder (.pth version)
+├── model-files/                # Trained model and scaler files
 └── README.md
 ```
 
